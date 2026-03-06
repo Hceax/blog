@@ -146,10 +146,12 @@ hexo.extend.filter.register('after_post_render', function (data) {
     data.content = data.content.replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/, '');
   }
   if (data.password && data.content) {
+    const cfg = getPrivateConfig();
+    const placeholder = cfg.abstract || '此文章已加密，请输入密码查看。';
     const moreIdx = data.content.indexOf('<!-- more -->');
-    if (moreIdx > 0) {
-      data.abstract = data.content.substring(0, moreIdx).trim();
-    }
+    const realExcerpt = moreIdx > 0 ? data.content.substring(0, moreIdx).trim() : '';
+    data.abstract = `<span class="hbe-placeholder">${placeholder}</span>`
+      + (realExcerpt ? `<span class="hbe-excerpt" style="display:none">${realExcerpt}</span>` : '');
   }
   return data;
 }, 1);
