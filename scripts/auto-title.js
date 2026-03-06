@@ -7,6 +7,27 @@ const moment = require('moment');
 
 const FIRST_H1 = /^#\s+(.+)$/m;
 
+// Insert <!-- more --> after the first paragraph of body text for index excerpts.
+// Skips leading headings so the excerpt contains actual prose, not just a section title.
+function insertExcerptBreak(text) {
+  if (text.includes('<!-- more -->')) return text;
+  const lines = text.split('\n');
+  let inParagraph = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.startsWith('#') || line === '') {
+      if (inParagraph) {
+        lines.splice(i, 0, '<!-- more -->');
+        return lines.join('\n');
+      }
+      continue;
+    }
+    if (line.startsWith('```') || line.startsWith('|')) continue;
+    inParagraph = true;
+  }
+  return text;
+}
+
 let _privateConfig = null;
 function getPrivateConfig() {
   if (_privateConfig) return _privateConfig;
@@ -60,6 +81,13 @@ function getPostDates(fullPath) {
 
 // 必须 async：setCategories 返回 Promise，不 await 会导致分类页漏文章
 hexo.extend.filter.register('before_post_render', async function (data) {
+  // Skip README files — they are repo documentation, not blog posts.
+  const basename = path.basename(data.source).toLowerCase();
+  if (basename === 'readme.md') {
+    data.published = false;
+    return data;
+  }
+
   const fullPath = data.full_source || path.join(hexo.source_dir, data.source);
 
   // --- 日期：从 git 提交记录读取，不依赖 front-matter ---
@@ -87,10 +115,13 @@ hexo.extend.filter.register('before_post_render', async function (data) {
     const cfg = getPrivateConfig();
     if (cfg.password) {
       data.password = cfg.password;
-      data.abstract = cfg.abstract || '';
       data.message = cfg.message || '';
     }
   }
+
+  // --- 摘要：自动截断，首页只显示第一段 ---
+  data.content = insertExcerptBreak(data.content || '');
+  data._content = insertExcerptBreak(data._content || '');
 
   // --- 分类：取 _posts/ 下的顶层目录名，通过 category_map 反查中文显示名 ---
   // _posts/engineering/private/foo.md → parts[1] = 'engineering'
@@ -106,10 +137,19 @@ hexo.extend.filter.register('before_post_render', async function (data) {
   return data;
 });
 
-// 兜底：渲染后再删一次 <h1>，防止 before_post_render 阶段删除未生效
+// Priority 1: runs before hexo-blog-encrypt.
+// 1) Remove leftover <h1> from rendered HTML.
+// 2) For encrypted posts, copy the real excerpt into `abstract` so the
+//    index page shows actual content instead of a generic placeholder.
 hexo.extend.filter.register('after_post_render', function (data) {
   if (data.content) {
     data.content = data.content.replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/, '');
   }
+  if (data.password && data.content) {
+    const moreIdx = data.content.indexOf('<!-- more -->');
+    if (moreIdx > 0) {
+      data.abstract = data.content.substring(0, moreIdx).trim();
+    }
+  }
   return data;
-});
+}, 1);
