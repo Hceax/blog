@@ -1,3 +1,6 @@
 [submodule "hexo-site"]
 	path = hexo-site
 	url = https://github.com/hexojs/hexo-starter.git
+[submodule "source/_posts"]
+	path = source/_posts
+	url = git@github.com:Hceax/blog-private.git
