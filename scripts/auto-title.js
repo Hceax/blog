@@ -7,14 +7,28 @@ const moment = require('moment');
 
 const FIRST_H1 = /^#\s+(.+)$/m;
 
+// Check whether a real <!-- more --> marker exists outside code fences/inline code.
+function hasRealExcerptBreak(text) {
+  let inFence = false;
+  for (const line of text.split('\n')) {
+    const t = line.trim();
+    if (t.startsWith('```')) inFence = !inFence;
+    if (!inFence && t === '<!-- more -->') return true;
+  }
+  return false;
+}
+
 // Insert <!-- more --> after the first paragraph of body text for index excerpts.
-// Skips leading headings so the excerpt contains actual prose, not just a section title.
+// Skips headings, blank lines, code fences, and tables.
 function insertExcerptBreak(text) {
-  if (text.includes('<!-- more -->')) return text;
+  if (hasRealExcerptBreak(text)) return text;
   const lines = text.split('\n');
   let inParagraph = false;
+  let inFence = false;
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
+    if (line.startsWith('```')) { inFence = !inFence; continue; }
+    if (inFence) continue;
     if (line.startsWith('#') || line === '') {
       if (inParagraph) {
         lines.splice(i, 0, '<!-- more -->');
@@ -22,7 +36,7 @@ function insertExcerptBreak(text) {
       }
       continue;
     }
-    if (line.startsWith('```') || line.startsWith('|')) continue;
+    if (line.startsWith('|')) continue;
     inParagraph = true;
   }
   return text;
