@@ -101,6 +101,22 @@ hexo.extend.filter.register('after_render:html', function (html) {
         shouldCaptureDecryptWrite = true;
       } catch (_) {}
     });
+
+    // Reveal real excerpts on index page when a valid session exists.
+    function revealExcerpts() {
+      var g = ls.getItem(GLOBAL_KEY);
+      var gt = Number(ls.getItem(GLOBAL_TS_KEY) || 0);
+      if (!g || !gt || now - gt > TTL_MS) return;
+      var ph = document.getElementsByClassName('hbe-placeholder');
+      var ex = document.getElementsByClassName('hbe-excerpt');
+      for (var i = 0; i < ph.length; i++) ph[i].style.display = 'none';
+      for (var i = 0; i < ex.length; i++) ex[i].style.display = '';
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', revealExcerpts);
+    } else {
+      revealExcerpts();
+    }
   } catch (_) {}
 })();</script>`;
 
