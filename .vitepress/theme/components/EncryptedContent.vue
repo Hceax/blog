@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import CryptoJS from 'crypto-js'
+import {
+  clearSessionPassword,
+  getSessionPassword,
+  saveSessionPassword
+} from '../utils/encryptSession'
+import { notifyContentUpdated } from '../utils/outline'
 
 const props = defineProps<{ data: string }>()
 
@@ -8,10 +14,6 @@ const password = ref('')
 const decryptedHtml = ref('')
 const error = ref('')
 const isDecrypted = ref(false)
-
-const GLOBAL_KEY = 'vp-encrypt:global'
-const GLOBAL_TS_KEY = 'vp-encrypt:global:ts'
-const TTL_MS = 2 * 60 * 60 * 1000
 
 function decrypt(pwd: string): string | null {
   try {
@@ -23,12 +25,42 @@ function decrypt(pwd: string): string | null {
   }
 }
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\u4e00-\u9fff\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function addHeadingIds(html: string): string {
+  const el = document.createElement('div')
+  el.innerHTML = html
+  const used = new Map<string, number>()
+
+  el.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+    const title = (h.textContent || '').trim()
+    let slug = slugify(title)
+    const n = used.get(slug) || 0
+    used.set(slug, n + 1)
+    if (n > 0) slug += `-${n}`
+    h.setAttribute('id', slug)
+  })
+
+  return el.innerHTML
+}
+
+function triggerOutlineUpdate() {
+  nextTick(() => {
+    void notifyContentUpdated()
+  })
+}
+
 function showContent(html: string, pwd: string) {
-  decryptedHtml.value = html
+  decryptedHtml.value = addHeadingIds(html)
   isDecrypted.value = true
-  const now = String(Date.now())
-  localStorage.setItem(GLOBAL_KEY, pwd)
-  localStorage.setItem(GLOBAL_TS_KEY, now)
+  saveSessionPassword(pwd)
+  triggerOutlineUpdate()
 }
 
 function tryDecrypt() {
@@ -45,14 +77,13 @@ function reEncrypt() {
   decryptedHtml.value = ''
   isDecrypted.value = false
   password.value = ''
-  localStorage.removeItem(GLOBAL_KEY)
-  localStorage.removeItem(GLOBAL_TS_KEY)
+  clearSessionPassword()
+  triggerOutlineUpdate()
 }
 
 onMounted(() => {
-  const savedPwd = localStorage.getItem(GLOBAL_KEY)
-  const savedTs = Number(localStorage.getItem(GLOBAL_TS_KEY) || 0)
-  if (savedPwd && savedTs && Date.now() - savedTs <= TTL_MS) {
+  const savedPwd = getSessionPassword()
+  if (savedPwd) {
     const html = decrypt(savedPwd)
     if (html) {
       showContent(html, savedPwd)
