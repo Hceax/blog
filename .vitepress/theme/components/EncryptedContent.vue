@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import CryptoJS from 'crypto-js'
+import { contentUpdatedCallbacks } from 'vitepress/dist/client/app/utils'
 
 const props = defineProps<{ data: string }>()
 
@@ -23,12 +24,44 @@ function decrypt(pwd: string): string | null {
   }
 }
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\u4e00-\u9fff\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function addHeadingIds(html: string): string {
+  const el = document.createElement('div')
+  el.innerHTML = html
+  const used = new Map<string, number>()
+
+  el.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+    const title = (h.textContent || '').trim()
+    let slug = slugify(title)
+    const n = used.get(slug) || 0
+    used.set(slug, n + 1)
+    if (n > 0) slug += `-${n}`
+    h.setAttribute('id', slug)
+  })
+
+  return el.innerHTML
+}
+
+function triggerOutlineUpdate() {
+  nextTick(() => {
+    contentUpdatedCallbacks.forEach((fn: Function) => fn())
+  })
+}
+
 function showContent(html: string, pwd: string) {
-  decryptedHtml.value = html
+  decryptedHtml.value = addHeadingIds(html)
   isDecrypted.value = true
   const now = String(Date.now())
   localStorage.setItem(GLOBAL_KEY, pwd)
   localStorage.setItem(GLOBAL_TS_KEY, now)
+  triggerOutlineUpdate()
 }
 
 function tryDecrypt() {
@@ -47,6 +80,7 @@ function reEncrypt() {
   password.value = ''
   localStorage.removeItem(GLOBAL_KEY)
   localStorage.removeItem(GLOBAL_TS_KEY)
+  triggerOutlineUpdate()
 }
 
 onMounted(() => {
