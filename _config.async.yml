@@ -1,0 +1,92 @@
+theme:
+  switch: true
+  default: style-light
+
+favicon:
+  logo: /images/avatar.jpg
+  visibilitychange: true
+  hidden: /images/avatar.jpg
+  show_text: (/≧▽≦/)回来啦！
+  hide_text: (●—●)去哪了~
+
+user:
+  name: Bob Hceax
+  first_name: Hceax
+  last_name: Bob
+  email: hceax@hotmail.com
+  domain: https://hceax.github.io/blog
+  avatar: /images/avatar.jpg
+  describe: Can do everything
+  rule_text:
+
+top_bars:
+  - title: home
+    url: /
+  - title: archives
+    url: /archives/
+  - title: categories
+    url: /categories/
+  - title: about
+    url: /about/
+
+sidebar:
+  social:
+    - name: github
+      icon: fab fa-github
+      url: https://github.com/Hceax
+    - name: email
+      icon: fas fa-envelope
+      url: mailto:hceax@hotmail.com
+  typed_text_prefix: "I'm"
+  typed_text:
+    - "a WPS Client Developer"
+    - "a C++ / Qt enthusiast"
+    - "curious about everything"
+
+banner:
+  index:
+    type: img
+    bgurl: https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80
+    banner_title: Bob Hceax's Blog
+    banner_text: 记录生活中的技术实践与分享
+  archive:
+    type: img
+    bgurl: https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=1920&q=80
+    banner_title: 归档
+    banner_text:
+  categories:
+    type: img
+    bgurl: https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1920&q=80
+    banner_title: 分类
+    banner_text:
+
+footer:
+  copyright_year: 2026
+  powered:
+    enable: true
+  live_time:
+    enable: true
+    prefix: footer.tips
+    start_time: 03/05/2026 00:00:00
+  custom_text: Hosted by <a href="https://pages.github.com" rel="noopener" target="_blank">GitHub Pages</a>
+
+about:
+  title: 关于我
+  introduction: |
+    一名 WPS 客户端开发工程师，日常和 C++ / Qt 打交道，偶尔也写点别的。
+    这个博客用来记录生活中的技术实践和踩坑经验——不限于某种语言或框架，遇到什么有意思的就写什么。
+  blog: |
+    如果恰好帮到了你，那就太好了。
+  privacy: |
+    本站不收集任何个人信息。
+
+toc:
+  enable: true
+  list_number: true
+  max_depth: 3
+  min_depth: 1
+
+creative_commons:
+  license: by-nc-sa
+  post: true
+  language: deed.zh-hans
