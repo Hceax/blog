@@ -15,7 +15,6 @@ if ($LASTEXITCODE -ne 0) {
 
 Copy-Item hexo-site\package.json . -Force
 npm install
-npm install hexo-theme-async hexo-renderer-less hexo-renderer-ejs
 npm install hexo-theme-next
 npm install hexo-blog-encrypt
 Write-Host "Ready! Run 'npx hexo s' to start local server." -ForegroundColor Green
