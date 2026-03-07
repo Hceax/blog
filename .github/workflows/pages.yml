@@ -1,4 +1,4 @@
-name: Deploy Hexo to GitHub Pages
+name: Deploy VitePress to GitHub Pages
 
 on:
   push:
@@ -24,41 +24,33 @@ jobs:
           fetch-depth: 0
           submodules: false
 
-      - name: Checkout hexo-site submodule
-        run: git submodule update --init hexo-site
-
       - name: Checkout posts submodule (private)
         env:
           PRIVATE_DEPLOY_KEY: ${{ secrets.PRIVATE_DEPLOY_KEY }}
         run: |
           if [ -z "$PRIVATE_DEPLOY_KEY" ]; then
             echo "PRIVATE_DEPLOY_KEY not configured — creating placeholder post."
-            mkdir -p source/_posts
-            printf '%s\n' '---' 'title: Welcome' 'date: 2024-01-01' '---' 'This blog is under construction.' > source/_posts/welcome.md
+            mkdir -p posts/engineering
+            printf '%s\n' '# Welcome' '' 'This blog is under construction.' > posts/engineering/welcome.md
             exit 0
           fi
           mkdir -p ~/.ssh
           echo "$PRIVATE_DEPLOY_KEY" > ~/.ssh/private_key
           chmod 600 ~/.ssh/private_key
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          GIT_SSH_COMMAND="ssh -i ~/.ssh/private_key" git submodule update --init source/_posts
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/private_key" git submodule update --init posts
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
-      - name: Assemble Hexo site
-        run: |
-          cp hexo-site/package.json .
-          npm install
-          npm install hexo-theme-next
-          npm install hexo-blog-encrypt
-
-      - run: npx hexo generate
+      - run: npm ci
+      - run: npm run build
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: public/
+          path: .vitepress/dist/
 
   deploy:
     needs: build
