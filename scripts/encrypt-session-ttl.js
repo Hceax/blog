@@ -94,6 +94,29 @@ hexo.extend.filter.register('after_render:html', function (html) {
       } catch (_) {}
     }
 
+    // Hook removeItem: when hbe.js "Encrypt again" button removes the
+    // per-page key, also clear the global session so the reload won't
+    // immediately restore it from the shared cache.
+    var rawRemoveItem = storageProto && storageProto.removeItem;
+    if (rawRemoveItem && !storageProto.__hbeRemoveItemHooked) {
+      storageProto.removeItem = function (key) {
+        var ret = rawRemoveItem.apply(this, arguments);
+        try {
+          if (this === ls && key === currentStorageName) {
+            rawRemoveItem.call(ls, GLOBAL_KEY);
+            rawRemoveItem.call(ls, GLOBAL_TS_KEY);
+            rawRemoveItem.call(ls, TS_PREFIX + currentStorageName);
+          }
+        } catch (_) {}
+        return ret;
+      };
+      try {
+        Object.defineProperty(storageProto, '__hbeRemoveItemHooked', {
+          value: true, configurable: false, enumerable: false, writable: false
+        });
+      } catch (_) {}
+    }
+
     // hexo-blog-encrypt dispatches this event before writing localStorage.
     // Enable capture and let the setItem hook do precise synchronization.
     window.addEventListener('hexo-blog-decrypt', function () {
