@@ -1,0 +1,177 @@
+// ==================== About Page ====================
+
+.about-hero
+  text-align center
+  padding 40px 0 20px
+  h1
+    font-size 2.6em
+    font-weight 700
+    background linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+    -webkit-background-clip text
+    -webkit-text-fill-color transparent
+    background-clip text
+    margin-bottom 8px
+    animation about-fadeInDown 0.8s ease-out
+  .about-tagline
+    font-size 1.15em
+    color #888
+    letter-spacing 2px
+    animation about-fadeInUp 1s ease-out
+
+.about-divider
+  width 60px
+  height 3px
+  background linear-gradient(90deg, #667eea, #764ba2)
+  border none
+  margin 30px auto
+  border-radius 2px
+
+.about-section
+  margin 30px 0
+  animation about-fadeIn 1.2s ease-out
+  h2
+    font-size 1.5em
+    font-weight 600
+    color #444
+    margin-bottom 16px
+    padding-left 12px
+    border-left 3px solid #764ba2
+
+.about-intro
+  font-size 1.05em
+  line-height 1.9
+  color #555
+  p
+    margin-bottom 12px
+
+.about-tech-tags
+  display flex
+  flex-wrap wrap
+  gap 10px
+  margin-top 12px
+  .tag-item
+    display inline-flex
+    align-items center
+    gap 6px
+    padding 8px 16px
+    border-radius 20px
+    font-size 0.9em
+    font-weight 500
+    color #fff
+    transition all 0.3s ease
+    &:hover
+      transform translateY(-3px)
+      box-shadow 0 6px 20px rgba(0,0,0,0.15)
+  .tag-cpp
+    background linear-gradient(135deg, #00599C, #004482)
+  .tag-qt
+    background linear-gradient(135deg, #41CD52, #2EA043)
+  .tag-python
+    background linear-gradient(135deg, #3776AB, #FFD43B)
+    color #333
+  .tag-windows
+    background linear-gradient(135deg, #0078D4, #005A9E)
+  .tag-automation
+    background linear-gradient(135deg, #FF6B6B, #EE5A24)
+  .tag-frontend
+    background linear-gradient(135deg, #F7DF1E, #F0DB4F)
+    color #333
+
+.about-hobbies
+  display grid
+  grid-template-columns repeat(auto-fit, minmax(140px, 1fr))
+  gap 16px
+  margin-top 16px
+
+.hobby-card
+  text-align center
+  padding 24px 12px
+  border-radius 12px
+  background #fafafa
+  border 1px solid #eee
+  transition all 0.35s ease
+  cursor default
+  .hobby-icon
+    font-size 2.2em
+    display block
+    margin-bottom 10px
+  .hobby-name
+    font-size 0.95em
+    font-weight 600
+    color #555
+  .hobby-desc
+    font-size 0.78em
+    color #999
+    margin-top 4px
+  &:hover
+    transform translateY(-6px)
+    box-shadow 0 12px 30px rgba(102,126,234,0.15)
+    border-color #667eea
+
+.about-contact
+  display flex
+  gap 16px
+  margin-top 16px
+  flex-wrap wrap
+  a
+    display inline-flex
+    align-items center
+    gap 8px
+    padding 12px 24px
+    border-radius 8px
+    font-size 0.95em
+    font-weight 500
+    text-decoration none
+    transition all 0.3s ease
+    &:hover
+      transform translateY(-2px)
+  .contact-github
+    background #24292e
+    color #fff
+    &:hover
+      background #1a1e22
+      box-shadow 0 6px 20px rgba(36,41,46,0.3)
+  .contact-email
+    background linear-gradient(135deg, #667eea, #764ba2)
+    color #fff
+    &:hover
+      box-shadow 0 6px 20px rgba(118,75,162,0.3)
+
+.about-footer-text
+  text-align center
+  margin-top 50px
+  padding 30px 0
+  font-size 0.95em
+  color #aaa
+  font-style italic
+  border-top 1px solid #eee
+
+@keyframes about-fadeInDown
+  from
+    opacity 0
+    transform translateY(-20px)
+  to
+    opacity 1
+    transform translateY(0)
+
+@keyframes about-fadeInUp
+  from
+    opacity 0
+    transform translateY(20px)
+  to
+    opacity 1
+    transform translateY(0)
+
+@keyframes about-fadeIn
+  from
+    opacity 0
+  to
+    opacity 1
+
+@media (max-width: 600px)
+  .about-hobbies
+    grid-template-columns repeat(2, 1fr)
+  .about-contact
+    flex-direction column
+    a
+      justify-content center
