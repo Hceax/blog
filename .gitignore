@@ -1,14 +1,6 @@
+node_modules/
+.vitepress/cache/
+.vitepress/dist/
+*.log
 .DS_Store
 Thumbs.db
-db.json
-*.log
-node_modules/
-public/
-.deploy*/
-_multiconfig.yml
-
-# Framework files managed by hexo-site submodule
-package.json
-package-lock.json
-scaffolds/
-themes/
