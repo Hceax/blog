@@ -4,6 +4,7 @@ import BlogHome from './components/BlogHome.vue'
 import ArchivePage from './components/ArchivePage.vue'
 import CategoryPage from './components/CategoryPage.vue'
 import EncryptedContent from './components/EncryptedContent.vue'
+import './custom.css'
 
 export default {
   extends: DefaultTheme,

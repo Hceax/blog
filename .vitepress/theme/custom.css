@@ -1,0 +1,72 @@
+:root {
+  /* Shared layout tokens for both home and article pages */
+  --vp-layout-max-width: 1560px;
+  --blog-page-max-width: 1260px;
+  --blog-home-max-width: 1180px;
+  --blog-content-max-width: 940px;
+  --blog-aside-width: 250px;
+  --blog-column-gap: 40px;
+}
+
+/* Give more width to article content while keeping right outline */
+.VPDoc.has-aside .content-container {
+  max-width: var(--blog-content-max-width) !important;
+}
+
+.VPDoc.has-aside .content {
+  max-width: var(--blog-content-max-width) !important;
+}
+
+/* Keep aside compact to prioritize article readability */
+.VPDoc.has-aside .aside {
+  width: var(--blog-aside-width);
+  padding-left: 24px;
+}
+
+@media (min-width: 960px) {
+  .VPDoc.has-aside .content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Slightly reduce left whitespace on large screens */
+@media (min-width: 1280px) {
+  .VPDoc:not(.has-sidebar).has-aside .container {
+    max-width: var(--blog-page-max-width) !important;
+  }
+
+  .VPDoc .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Refine typography on post pages for better long-form reading */
+.VPDoc .vp-doc {
+  font-size: 16.5px;
+}
+
+.VPDoc .vp-doc p {
+  line-height: 1.9;
+  margin: 1em 0;
+}
+
+.VPDoc .vp-doc h1,
+.VPDoc .vp-doc h2 {
+  letter-spacing: 0.01em;
+}
+
+.VPDoc .vp-doc h1 {
+  margin-top: 0.2em;
+  margin-bottom: 0.75em;
+}
+
+.VPDoc .vp-doc h2 {
+  margin-top: 1.5em;
+}
+
+.VPDoc .vp-doc div[class*='language-'] {
+  border-radius: 14px;
+  margin: 1.2em 0;
+}
