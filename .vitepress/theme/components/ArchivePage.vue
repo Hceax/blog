@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { data as posts } from '../../../posts.data.mts'
 import { withBase } from 'vitepress'
+import { formatMonthDay } from '../utils/date'
 
 interface YearGroup {
   year: string
@@ -21,8 +22,7 @@ const grouped = computed<YearGroup[]>(() => {
 })
 
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr)
-  return `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  return formatMonthDay(dateStr)
 }
 </script>
 

@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { useData } from 'vitepress'
+import { formatDateCNLong } from '../utils/date'
 
 const { frontmatter } = useData()
 
 function formatDate(dateStr: string): string {
-  if (!dateStr) return ''
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
+  return formatDateCNLong(dateStr)
 }
 </script>
 

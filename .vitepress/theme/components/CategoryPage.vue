@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { data as posts } from '../../../posts.data.mts'
 import { withBase } from 'vitepress'
+import { formatDateCN } from '../utils/date'
 
 interface CategoryGroup {
   name: string
@@ -24,8 +25,7 @@ const grouped = computed<CategoryGroup[]>(() => {
 })
 
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })
+  return formatDateCN(dateStr)
 }
 </script>
 

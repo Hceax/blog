@@ -1,11 +1,6 @@
 import { defineConfig } from 'vitepress'
 import { encryptPlugin } from './plugins/encrypt'
-
-const CATEGORY_MAP: Record<string, string> = {
-  engineering: '工程实践',
-  'crash-analysis': '崩溃分析',
-  'source-analysis': '源码分析'
-}
+import { CATEGORY_MAP } from './shared/blogMeta'
 
 export default defineConfig({
   title: "Bob Hceax's Blog",
@@ -59,7 +54,6 @@ export default defineConfig({
     const parts = rel.replace('posts/', '').split('/')
     const catSlug = parts[0]
     pageData.frontmatter.category = CATEGORY_MAP[catSlug] || catSlug
-    pageData.frontmatter.categorySlug = catSlug
 
     try {
       const { execSync } = await import('child_process')
@@ -72,9 +66,7 @@ export default defineConfig({
         return flag === 'first' ? out.split('\n').pop() || '' : out
       }
       const created = getDate('first')
-      const updated = getDate('last')
       if (created) pageData.frontmatter.postDate = created
-      if (updated) pageData.frontmatter.postUpdated = updated
     } catch {}
   },
 
