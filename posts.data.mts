@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
+import { CATEGORY_MAP, H1_RE } from './.vitepress/shared/blogMeta'
 
 export interface Post {
   title: string
@@ -12,14 +13,6 @@ export interface Post {
   isPrivate: boolean
   excerpt: string
 }
-
-const CATEGORY_MAP: Record<string, string> = {
-  engineering: '工程实践',
-  'crash-analysis': '崩溃分析',
-  'source-analysis': '源码分析'
-}
-
-const H1_RE = /^#\s+(.+)$/m
 
 function gitDate(filePath: string, flag: 'first' | 'last'): string | null {
   try {
@@ -69,7 +62,7 @@ export default {
     return watchedFiles
       .filter(f => {
         const base = path.basename(f).toLowerCase()
-        return base !== 'readme.md' && base !== 'about.md'
+        return base !== 'readme.md'
       })
       .map(filePath => {
         const content = fs.readFileSync(filePath, 'utf-8')
