@@ -1,6 +1,7 @@
 ---
 title: 关于
 date: 2026-03-05 11:00:50
+layout: about
 ---
 
 ## Hey!
