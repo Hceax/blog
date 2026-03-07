@@ -1,11 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 import CryptoJS from 'crypto-js'
-import MarkdownIt from 'markdown-it'
+import { createMarkdownRenderer } from 'vitepress'
 
 const H1_RE = /^#\s+(.+)$/m
 let password: string | null = null
-const md = new MarkdownIt({ html: true, linkify: true, typographer: true })
+let mdPromise: Promise<any> | null = null
 
 function getPassword(root: string): string {
   if (password !== null) return password
@@ -26,13 +26,27 @@ function isPrivatePost(id: string): boolean {
 
 export function encryptPlugin() {
   let root = ''
+
+  const getRenderer = () => {
+    if (!mdPromise) {
+      mdPromise = createMarkdownRenderer(
+        root || process.cwd(),
+        {
+          lineNumbers: true
+        },
+        '/blog/'
+      )
+    }
+    return mdPromise
+  }
+
   return {
     name: 'vitepress-encrypt',
     enforce: 'pre' as const,
     configResolved(config: any) {
       root = config.root || process.cwd()
     },
-    transform(code: string, id: string) {
+    async transform(code: string, id: string) {
       if (!isPrivatePost(id)) return
 
       const pwd = getPassword(root)
@@ -43,7 +57,9 @@ export function encryptPlugin() {
         ? h1Match[1].trim()
         : path.basename(id, '.md').replace(/[-_]+/g, ' ')
 
-      const html = md.render(code)
+      const md = await getRenderer()
+      const rendered = md.render(code)
+      const html = typeof rendered === 'string' ? rendered : rendered.html
 
       const encrypted = CryptoJS.AES.encrypt(html, pwd).toString()
 

@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "crypto-js": "^4.2.0",
-    "markdown-it": "^14.1.1",
     "vitepress": "^1.6.4"
   }
 }
