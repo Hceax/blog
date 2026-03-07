@@ -51,7 +51,6 @@ jobs:
         run: |
           cp hexo-site/package.json .
           npm install
-          npm install hexo-theme-async hexo-renderer-less hexo-renderer-ejs
           npm install hexo-theme-next
           npm install hexo-blog-encrypt
 
