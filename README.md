@@ -5,53 +5,80 @@ Source for [Bob Hceax's Blog](https://hceax.github.io/blog/), built with [VitePr
 ## Project Structure
 
 ```
+├── .github/workflows/pages.yml        # CI: build & deploy to GitHub Pages
 ├── .vitepress/
-│   ├── config.mts                  # site config (nav, base, transforms)
-│   ├── plugins/encrypt.ts          # Vite plugin: AES-encrypt private posts at build time
+│   ├── config.mts                     # site config (nav, base, transforms)
+│   ├── plugins/
+│   │   └── encrypt.ts                 # Vite plugin: AES-encrypt private posts at build
+│   ├── shared/
+│   │   └── blogMeta.ts                # shared constants (CATEGORY_MAP, H1_RE)
 │   └── theme/
-│       ├── index.ts                # register global Vue components
-│       ├── Layout.vue              # inject post metadata via doc-before slot
-│       └── components/
-│           ├── BlogHome.vue        # home page post listing
-│           ├── ArchivePage.vue     # archive page (grouped by year)
-│           ├── CategoryPage.vue    # category page (grouped by category)
-│           ├── PostMeta.vue        # date & category tag on post pages
-│           └── EncryptedContent.vue # password form + AES decrypt + session
-├── posts/                          # submodule → Hceax/blog-private
-├── posts.data.mts                  # data loader: scan posts, extract metadata
-├── index.md                        # home page
-├── archives.md                     # archive page
-├── categories.md                   # category page
-├── about.md                        # about page
-├── package.json
-└── .github/workflows/pages.yml     # CI: build & deploy to GitHub Pages
+│       ├── index.ts                   # register global Vue components
+│       ├── Layout.vue                 # inject post metadata via #doc-before slot
+│       ├── custom.css                 # global layout & typography overrides
+│       ├── components/
+│       │   ├── BlogHome.vue           # Vivia-style homepage (cards + sidebar widgets)
+│       │   ├── ArchivePage.vue        # archive page grouped by year
+│       │   ├── CategoryPage.vue       # category page grouped by category
+│       │   ├── PostMeta.vue           # date / category / lock badge on posts
+│       │   └── EncryptedContent.vue   # password form + AES decrypt + outline sync
+│       └── utils/
+│           ├── date.ts                # date formatting helpers
+│           ├── encryptSession.ts      # localStorage session for decrypt state
+│           └── outline.ts             # trigger VitePress outline refresh
+├── posts/                             # submodule → Hceax/blog-private
+├── public/images/avatar.jpg           # profile avatar used by BlogHome
+├── posts.data.mts                     # data loader: scan posts, extract metadata
+├── index.md                           # home page
+├── archives.md                        # archive page
+├── categories.md                      # category page
+├── about.md                           # about page
+└── package.json
 ```
 
 ## How It Works
 
-- **Zero front-matter** — post titles are extracted from the first `# heading`; dates come from Git history.
-- **Directory-based categories** — top-level directories under `posts/` map to category names via `CATEGORY_MAP` in `config.mts`.
-- **Encryption** — any `.md` under a `private/` directory is AES-encrypted at build time by the Vite plugin. The password is read from `posts/_config.json`. Client-side decryption uses CryptoJS with a 2-hour session stored in localStorage.
-- **Session sharing** — decrypting one private post unlocks all others until the session expires or the user clicks "re-encrypt".
+### Zero-Frontmatter Content Model
 
-## Local Development
+- Post titles are extracted from the first `# heading`.
+- Publish and update dates are derived from `git log` history.
+- Categories are determined by directory structure under `posts/` and mapped via `CATEGORY_MAP` in `.vitepress/shared/blogMeta.ts`.
+
+### Build-Time Encryption
+
+- Any `.md` file under a `private/` directory is AES-encrypted at build time by `.vitepress/plugins/encrypt.ts`.
+- The plugin uses VitePress's native `createMarkdownRenderer` to render markdown to HTML, then encrypts the result with the password from `posts/_config.json`.
+- Client-side decryption uses `crypto-js` with a 2-hour session stored in `localStorage`.
+- Decrypting one post unlocks all private posts until the session expires or the user clicks "re-encrypt".
+- After decryption, heading IDs are dynamically generated and VitePress's outline is refreshed so the right-side TOC works correctly.
+
+### Homepage Design
+
+The homepage (`BlogHome.vue`) uses a two-column layout inspired by [Vivia](https://github.com/saicaca/vivia):
+
+- **Main column**: banner + post cards with excerpts
+- **Sidebar**: animated profile card, category/archive/recent-posts widgets
+
+Layout tokens are shared between homepage and article pages via CSS custom properties in `custom.css`.
+
+## Development
 
 ```bash
+git submodule update --init posts
 npm install
 npm run dev        # http://localhost:5173/blog/
 ```
 
-The `posts/` submodule must be initialized:
-
-```bash
-git submodule update --init posts
-```
-
 ## Deployment
 
-Handled by GitHub Actions (`.github/workflows/pages.yml`). Triggers on push to `main` or `repository_dispatch` from the private repo. The private submodule is cloned via SSH deploy key (`PRIVATE_DEPLOY_KEY` secret).
+GitHub Actions (`.github/workflows/pages.yml`) builds and deploys on:
+
+- Push to `main`
+- `repository_dispatch` from the private content repo
+
+The private submodule is cloned via SSH deploy key (`PRIVATE_DEPLOY_KEY` secret).
 
 ## Adding a Category
 
 1. Create the directory under `posts/` (in the private repo).
-2. Add the slug → display-name mapping to `CATEGORY_MAP` in `.vitepress/config.mts`.
+2. Add the slug → display-name mapping to `CATEGORY_MAP` in `.vitepress/shared/blogMeta.ts`.
