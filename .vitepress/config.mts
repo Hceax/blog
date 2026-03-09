@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import { encryptPlugin } from './plugins/encrypt'
+import { mermaidMarkdownPlugin } from './plugins/mermaid'
 import { CATEGORY_MAP } from './shared/blogMeta'
 
 export default defineConfig({
@@ -75,6 +76,9 @@ export default defineConfig({
   },
 
   markdown: {
-    lineNumbers: true
+    lineNumbers: true,
+    config(md) {
+      md.use(mermaidMarkdownPlugin)
+    }
   }
 })

@@ -3,6 +3,7 @@ import path from 'path'
 import CryptoJS from 'crypto-js'
 import { createMarkdownRenderer } from 'vitepress'
 import { H1_RE } from '../shared/blogMeta'
+import { mermaidMarkdownPlugin } from './mermaid'
 let password: string | null = null
 let mdPromise: Promise<any> | null = null
 
@@ -31,7 +32,10 @@ export function encryptPlugin() {
       mdPromise = createMarkdownRenderer(
         root || process.cwd(),
         {
-          lineNumbers: true
+          lineNumbers: true,
+          config(md) {
+            md.use(mermaidMarkdownPlugin)
+          }
         },
         '/blog/'
       )

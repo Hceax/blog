@@ -1,4 +1,6 @@
 import DefaultTheme from 'vitepress/theme'
+import { onMounted, watch, nextTick } from 'vue'
+import { useRoute } from 'vitepress'
 import Layout from './Layout.vue'
 import BlogHome from './components/BlogHome.vue'
 import ArchivePage from './components/ArchivePage.vue'
@@ -14,5 +16,15 @@ export default {
     app.component('ArchivePage', ArchivePage)
     app.component('CategoryPage', CategoryPage)
     app.component('EncryptedContent', EncryptedContent)
+  },
+  setup() {
+    const route = useRoute()
+    const render = () => {
+      nextTick(() => {
+        import('./utils/mermaid').then(m => m.renderMermaid())
+      })
+    }
+    onMounted(render)
+    watch(() => route.path, render)
   }
 }
