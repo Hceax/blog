@@ -7,6 +7,8 @@ import {
   saveSessionPassword
 } from '../utils/encryptSession'
 import { notifyContentUpdated } from '../utils/outline'
+const renderMermaid = (el?: Element | null) =>
+  import('../utils/mermaid').then(m => m.renderMermaid(el))
 
 const props = defineProps<{ data: string }>()
 
@@ -50,9 +52,12 @@ function addHeadingIds(html: string): string {
   return el.innerHTML
 }
 
+const decryptedRef = ref<HTMLElement | null>(null)
+
 function triggerOutlineUpdate() {
   nextTick(() => {
     void notifyContentUpdated()
+    renderMermaid(decryptedRef.value)
   })
 }
 
@@ -110,7 +115,7 @@ onMounted(() => {
       <p v-if="error" class="encrypt-error">{{ error }}</p>
     </div>
     <div v-else>
-      <div class="vp-doc decrypted-body" v-html="decryptedHtml" />
+      <div ref="decryptedRef" class="vp-doc decrypted-body" v-html="decryptedHtml" />
       <div class="re-encrypt-bar">
         <button @click="reEncrypt" class="re-encrypt-btn">🔒 再次加密</button>
       </div>
