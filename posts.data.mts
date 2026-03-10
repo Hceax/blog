@@ -16,10 +16,16 @@ export interface Post {
 
 function gitDate(filePath: string, flag: 'first' | 'last'): string | null {
   try {
+    const absPath = path.resolve(filePath)
+    const postsDir = path.resolve('posts')
+    const isInSubmodule = absPath.startsWith(postsDir + path.sep)
+    const cwd = isInSubmodule ? postsDir : undefined
+    const target = isInSubmodule ? path.relative(postsDir, absPath) : filePath
+
     const cmd = flag === 'first'
-      ? `git log --diff-filter=A --follow --format=%aI -- "${filePath}"`
-      : `git log -1 --format=%aI -- "${filePath}"`
-    const out = execSync(cmd, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
+      ? `git log --diff-filter=A --follow --format=%aI -- "${target}"`
+      : `git log -1 --format=%aI -- "${target}"`
+    const out = execSync(cmd, { cwd, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
     const line = flag === 'first' ? out.split('\n').pop() : out
     return line || null
   } catch {
