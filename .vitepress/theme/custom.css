@@ -6,6 +6,14 @@
   --blog-content-max-width: 940px;
   --blog-aside-width: 250px;
   --blog-column-gap: 40px;
+
+  /* iOS / Apple-style font stack */
+  --vp-font-family-base: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "SF Pro Display", "PingFang SC", "Helvetica Neue", Helvetica, Arial,
+    "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --vp-font-family-mono: "SF Mono", SFMono-Regular, ui-monospace,
+    "Cascadia Code", "JetBrains Mono", Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 }
 
 /* Give more width to article content while keeping right outline */
@@ -42,9 +50,13 @@
   }
 }
 
-/* Refine typography on post pages for better long-form reading */
+/* ── Typography: iOS-style reading experience ── */
+
 .VPDoc .vp-doc {
   font-size: 16.5px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 .VPDoc .vp-doc p {
@@ -53,20 +65,194 @@
 }
 
 .VPDoc .vp-doc h1,
-.VPDoc .vp-doc h2 {
-  letter-spacing: 0.01em;
+.VPDoc .vp-doc h2,
+.VPDoc .vp-doc h3 {
+  letter-spacing: -0.01em;
+  font-weight: 700;
 }
 
 .VPDoc .vp-doc h1 {
   margin-top: 0.2em;
   margin-bottom: 0.75em;
+  font-size: 2em;
 }
 
 .VPDoc .vp-doc h2 {
   margin-top: 1.5em;
+  font-size: 1.5em;
 }
+
+.VPDoc .vp-doc h3 {
+  font-size: 1.22em;
+}
+
+/* Lists: tighter spacing for readability */
+.VPDoc .vp-doc ul,
+.VPDoc .vp-doc ol {
+  line-height: 1.8;
+}
+
+.VPDoc .vp-doc li + li {
+  margin-top: 4px;
+}
+
+/* Blockquote: left accent bar + soft background */
+.VPDoc .vp-doc blockquote {
+  border-left: 4px solid var(--vp-c-brand-1);
+  background: var(--vp-c-bg-soft);
+  border-radius: 0 12px 12px 0;
+  padding: 12px 20px;
+  margin: 1.2em 0;
+}
+
+/* Table: rounded corners + subtle stripe */
+.VPDoc .vp-doc table {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--vp-c-divider);
+}
+
+.VPDoc .vp-doc tr:nth-child(even) {
+  background: var(--vp-c-bg-soft);
+}
+
+.VPDoc .vp-doc th {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Horizontal rule: subtle divider */
+.VPDoc .vp-doc hr {
+  border: none;
+  border-top: 1px solid var(--vp-c-divider);
+  margin: 2em 0;
+}
+
+/* Links: smooth underline transition */
+.VPDoc .vp-doc a {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.VPDoc .vp-doc a:hover {
+  border-bottom-color: var(--vp-c-brand-1);
+}
+
+/* Images: rounded corners + subtle shadow */
+.VPDoc .vp-doc img {
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  margin: 0.8em 0;
+}
+
+/* ── Code block: mac-style window chrome ── */
 
 .VPDoc .vp-doc div[class*='language-'] {
   border-radius: 14px;
   margin: 1.2em 0;
+  padding-top: 36px;
+  position: relative;
+}
+
+.VPDoc .vp-doc div[class*='language-']::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow:
+    20px 0 0 #febc2e,
+    40px 0 0 #28c840;
+  z-index: 2;
+}
+
+/* Language label: reposition to top-right, away from mac dots */
+.VPDoc .vp-doc div[class*='language-'] > span.lang {
+  top: 10px;
+  right: 40px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+  transition: opacity 0.2s;
+}
+
+.VPDoc .vp-doc div[class*='language-']:hover > span.lang {
+  opacity: 0.85;
+}
+
+/* Line numbers: shift down to align with mac chrome */
+.VPDoc .vp-doc div[class*='language-'] .line-numbers-wrapper {
+  padding-top: 36px;
+  border-right: none;
+}
+
+.VPDoc .vp-doc div[class*='language-'] .line-numbers-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 36px;
+  right: 0;
+  height: calc(100% - 56px);
+  border-right: 1px solid var(--vp-code-block-divider-color);
+}
+
+/* Code area: shift down for chrome space */
+.VPDoc .vp-doc div[class*='language-'] > pre {
+  padding-top: 8px;
+}
+
+/* Copy button: keep above mac dots */
+.VPDoc .vp-doc div[class*='language-'] > button.copy {
+  top: 8px;
+}
+
+/* Code group tabs: mac dots on the tab bar */
+.VPDoc .vp-doc .vp-code-group .tabs {
+  padding-top: 36px;
+  position: relative;
+}
+
+.VPDoc .vp-doc .vp-code-group .tabs::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow:
+    20px 0 0 #febc2e,
+    40px 0 0 #28c840;
+}
+
+.VPDoc .vp-doc .vp-code-group div[class*='language-'] {
+  padding-top: 0;
+  border-radius: 0 0 14px 14px;
+}
+
+.VPDoc .vp-doc .vp-code-group div[class*='language-']::before {
+  display: none;
+}
+
+.VPDoc .vp-doc .vp-code-group div[class*='language-'] .line-numbers-wrapper {
+  padding-top: 0;
+}
+
+.VPDoc .vp-doc .vp-code-group div[class*='language-'] .line-numbers-wrapper::after {
+  top: 0;
+  height: calc(100% - 20px);
+}
+
+/* Inline code: subtle tinted background */
+.VPDoc .vp-doc :not(pre) > code {
+  background: var(--vp-code-bg);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 0.9em;
 }
