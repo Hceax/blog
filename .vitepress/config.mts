@@ -9,6 +9,9 @@ export default defineConfig({
   base: '/blog/',
   lang: 'zh-Hans',
   cleanUrls: true,
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/blog/favicon.svg' }],
+  ],
 
   srcExclude: ['**/README.md', '**/node_modules/**'],
 
