@@ -3,7 +3,8 @@ export const CATEGORY_MAP: Record<string, string> = {
   'ai-tools': 'AI 工具链',
   engineering: '工程实践',
   'crash-analysis': '崩溃分析',
-  'source-analysis': '源码分析'
+  'source-analysis': '源码分析',
+  'linux-kernel': 'Linux 内核'
 }
 
 export const H1_RE = /^#\s+(.+)$/m
