@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "crypto-js": "^4.2.0",
-    "mermaid": "^11.12.3",
+    "mermaid": "^11.14.0",
     "vitepress": "^1.6.4"
   }
 }
